@@ -1,0 +1,61 @@
+General information about this source tree
+==========================================
+Thanks for downloading Lmock. This README file contains directives about how to play with those sources.
+
+Overall organization
+--------------------
+The main directories of this project are:
+* src: the Lmock sources
+* tests: JUnit tests of Lmock
+* doc: the project documentation
+
+The examples sub-directory contains informal examples of JUnit tests that do not necessarily pass.
+The tests are aimed to run on a basic java environment with JUnit4. For Android, you should use the converter provided by tool/send2Droid, as explained later in this document.
+
+You may edit Lmock with your favorite IDE:
+* Netbeans: please use the formatter provided in tools/nb-formatter.zip to align with the coding conventions of this project
+* Other IDEs: there is no specific support (but it works well in Eclipse)
+
+You may also use the provided makefile to rebuild Lmock.
+
+Building Lmock with make
+------------------------
+The build process assumes that you have the following in your path:
+* Standard java tools: javac, jar, javadoc
+* findbugs
+* Optionally doxygen, to create the doxygen documentation of this project (make _doxydoc)
+
+For other tools (emma test coverage and junit) we provide a copy of the proper jar files in the tools.
+
+When typing make, the following happens:
+* Build the Lmock library
+* Run the JUnit tests two times:
+** One time with no traces
+** One time with the traces, in order to help debugging, if needed
+
+The second run of tests generates a coverage report, using emma.
+
+As a result, you get:
+* A lib directory, containing the generated packages:
+** lmock-VERSION.jar: the Lmock library
+** lmock-javadoc-VERSION.jar: javadoc of the Lmock API
+** lmock-src-VERSION.jar: the source package (useful if you want to have inline documentation in IDEs such as Eclipse)
+* findbugs.xml: the report produced by findbugs
+* lmock.fbp: the findbugs configuration file
+* coverage: EMMA coverage report
+
+Exporting files to an Android project
+-------------------------------------
+You have to decide where to create that project (e.g. MYDIR).
+Invoke tools/send2Droid MYDIR to get the following result:
+* A copy of the Lmock sources in MYDIR/lmockAndroid (so that you can tweak the project with your Android configuration, including a manifest)
+* MYDIR/lmockAndroidTest: a copy of the Lmock JUnit test suite, complying with JUnit3
+
+NOTE: notice that today, two test fail in Android... In fact, it's not actually a failure: we get what we expect, but not in the way we were expecting it. The bug fix is a work in progress.
+
+Support
+-------
+For any question or support request, please send an e-mail to: lmock@vmware.com.
+
+Enjoy!
+

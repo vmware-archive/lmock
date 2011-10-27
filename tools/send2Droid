@@ -1,0 +1,88 @@
+#!/bin/sh
+# *****************************************************************************
+# Copyright (C) 2010 VMware, Inc. All rights reserved.
+# -- VMware Confidential
+# *****************************************************************************
+
+## Copies (and translates) the project to Android projects.
+##
+## Syntax: send2Droid <target root>
+## Where <target root> is the root directory enclosing the project for
+## Android (lmockAndroid) and the corresponding test project (lmockAndroidTest).
+
+# *****************************************************************************
+# GLOBALS
+# *****************************************************************************
+
+## Root of the target directories.
+targetRoot=
+
+## Location of this script.
+whereIAm=`dirname $0`
+
+# *****************************************************************************
+# MISCELLANEOUS
+# *****************************************************************************
+
+# Displays the program usage and exits
+showUsageAndExit() {
+    echo "usage: send2Droid <target directory>"
+    exit 1
+}
+
+## Displays an information message.
+##
+## @param $*  the information
+info() {
+    echo "[INFO] $*"
+}
+
+# *****************************************************************************
+# PROCEDURES
+# *****************************************************************************
+
+## Performs a raw copy of the project sources.
+makeSources() {
+    target="${targetRoot}"/lmockAndroid
+    info "copying sources into '${target}''"
+    mkdir -p "${target}"
+    cp -R src "${target}"
+}
+
+## Calls t4Droid for a specific source and target directory.
+##
+## @param $1  the source directory
+## @param $2  the target directory
+processTests() {
+    info "copying tests into '$2'"
+    mkdir -p "$2"
+    sh ${whereIAm}/t4Droid "$1" "$2"
+}
+
+## Generates the test suite.
+makeTestSuite() {
+    source=tests/com/vmware/lmock/test
+    target="${targetRoot}"/lmockAndroidTest/src/com/vmware/lmock/test
+    processTests "${source}" "${target}"
+}
+
+## Generates the test examples.
+makeExamples() {
+    source=examples/com/vmware/lmock/example/list
+    target="${targetRoot}"/lmockAndroidTest/src/com/vmware/lmock/example/list
+    processTests "${source}" "${target}"
+
+    source=examples/com/vmware/lmock/example/geek
+    target="${targetRoot}"/lmockAndroidTest/src/com/vmware/lmock/example/geek
+    processTests "${source}" "${target}"
+}
+
+# *****************************************************************************
+# MAIN
+# *****************************************************************************
+[ $# != 1 ] && showUsageAndExit
+targetRoot="$1"
+makeSources
+makeTestSuite
+makeExamples
+

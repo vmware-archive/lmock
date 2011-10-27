@@ -1,0 +1,144 @@
+#!/bin/sh
+# *****************************************************************************
+# Copyright (C) 2010 VMware, Inc. All rights reserved.
+# -- VMware Confidential
+# *****************************************************************************
+
+## Translates the known tests in the project to run on Android.
+##
+## Parses the list of test files, convert them to JUnit3 tests running on
+## Android, and copies the outputs to a given directory.
+##
+## Usage: t4Droid <source directory> <target directory>
+##
+## The target directory must be the final location of the files (we do not
+## clone the package directory structure).
+
+# *****************************************************************************
+# GLOBALS
+# *****************************************************************************
+
+## Name of the source directory
+sourceDir=
+
+## Name of the target project directory
+targetDir=
+
+## List of input test files
+inputFileList=
+
+# *****************************************************************************
+# MISCELLANEOUS
+# *****************************************************************************
+
+# Displays the program usage and exits
+showUsageAndExit() {
+    echo "usage: t4Droid <source directory> <target directory>"
+    exit 1
+}
+
+## Displays an error message.
+##
+## @param $*  the error message
+error() {
+    echo "[ERROR] $*"
+}
+
+## Displays an information message.
+##
+## @param $*  the information
+info() {
+    echo "[INFO] $*"
+}
+
+## Displays an error and abruplty exits.
+##
+## @param $*  the error message (empty to skip the message)
+exitOnError() {
+    [ "$*" ] && error $*
+    exit 1
+}
+
+# *****************************************************************************
+# INPUT
+# *****************************************************************************
+
+## Enriches the list of input files with the ones found in a directory.
+##
+## @param $1  the directory name
+getInputFileListFrom() {
+    for file in `find "$1" -type f -name "*.java"`
+    do
+	inputFileList="${inputFileList} \"${file}\""
+	done
+}
+
+## Collects the list of files to process.
+##
+## The result goes into the variable "inputFileList".
+getInputFileList() {
+    info "gathering file list..."
+    getInputFileListFrom "${sourceDir}"
+}
+
+# *****************************************************************************
+# JUnit4 to Android
+# *****************************************************************************
+
+## Performs the translation of a JUnit4 test to Android.
+##
+## The result is dumped to the standard output.
+##
+## @param $1  the input file name
+convert2Droid() {
+    className=`basename "$1" | sed s=".java"==g`
+    sed -e s="[ \t]*@Test"==g \
+	-e s="[ \t]*@Before"==g \
+	-e s="[ \t]*@After"==g \
+	-e s="import org.junit.Test"="import android.test.AndroidTestCase"=g \
+	-e s="import static org.junit.*"==g \
+	-e s="// IMPORT ASSERTS FOR ANDROID"="import static junit.framework.Assert.*;"=g \
+	-e s="public class ${className}"="public class ${className} extends AndroidTestCase"=g < "$1"
+}
+
+## Converts and writes one file.
+##
+## @param $1  path to the input file
+## @param $2  path to the output file
+processInputFile() {
+    # Check whether this is actually a test file. If not perform a simple
+    # copy.
+    fileName=`basename "$1"`
+    refName=`echo "${fileName}" | sed s="Test.java$"==g`
+    if [ "${refName}""Test.java" = "${fileName}" ] || [ "${fileName}" = "LMAsserts.java" ]
+	then
+	info "converting file '$1'..."
+	convert2Droid "$1" > "$2"
+	elif [ "${fileName}" = "TestRunner.java" ]
+	then
+	info "skipping file "$1
+	else
+	info "copying file '$1'..."
+	cp "$1" "$2"
+	fi
+}
+
+## Converts and write each file provided by the input file list
+processInputFiles() {
+    eval set -- ${inputFileList}
+    for file in "$@"
+    do
+	targetFile="${targetDir}"/`basename "${file}"`
+	processInputFile "${file}" "${targetFile}"
+	done
+}
+
+# *****************************************************************************
+# MAIN
+# *****************************************************************************
+[ $# != 2 ] && showUsageAndExit
+sourceDir="$1"
+targetDir="$2"
+[ ! -d "${targetDir}" ] && exitOnError "no such directory '${targetDir}'"
+getInputFileList
+processInputFiles
