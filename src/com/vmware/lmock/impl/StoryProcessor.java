@@ -62,7 +62,7 @@ class StoryProcessor {
         if (hasNotYetMovedToFirstExpectation()) {
             Expectation expect = expectationList.getCurrentExpectation();
             if (expect != null) {
-                logger.trace("moveToFirstExpectationIfNeeded", "reseting");
+                logger.trace("moveToFirstExpectationIfNeeded", "resetting");
                 expect.getOccurrences().reset();
                 storyTracker.addExpectationReport(expect);
             }
@@ -141,7 +141,7 @@ class StoryProcessor {
         while (currentExpectation != null) {
             logger.trace("checkEveryExpectationIsSatisfied", "checking expectation=", currentExpectation);
             if (!currentExpectation.getOccurrences().canEndNow()) {
-                logger.trace("checkEveryExpectationIsSatisfied", "occurence=", currentExpectation, "can't end now!");
+                logger.trace("checkEveryExpectationIsSatisfied", "occurrence=", currentExpectation, "can't end now!");
                 throw new UnsatisfiedOccurrenceError(currentExpectation);
             }
 
@@ -243,7 +243,7 @@ class StoryProcessor {
                 // case is not necessarily an error, because a subsequent
                 // expectation may be OK.
                 if (currentExpectation.getOccurrences().hasReachedLimit()) {
-                    logger.trace("invoke", "reached the limit of epectation", currentExpectation,
+                    logger.trace("invoke", "reached the limit of expectation", currentExpectation,
                       "trying next expectation");
                     nextExpectation();
                 } else {

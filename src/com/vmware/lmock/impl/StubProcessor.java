@@ -65,7 +65,7 @@ class StubProcessor {
         // Give the priority to the younger stubs.
         for (int index = stubs.size() - 1; index >= 0; index--) {
             Stub stub = stubs.get(index);
-            logger.trace("searchStubForInvocation", "cheking stub", stub, "against invocation", invocation);
+            logger.trace("searchStubForInvocation", "checking stub", stub, "against invocation", invocation);
             if (stub.valueIsCompatibleWith(invocation)) {
                 logger.trace("searchStubForInvocation", "stub matches");
                 return stub;
