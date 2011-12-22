@@ -45,7 +45,7 @@ class StoryManager {
     protected Story createAndBeginNewStory(Actor... actors) {
         // Be sure that we restart from a clean environment.
         // We can't end the story at this level, because we may refer to
-        // old (but incomplete) elements, leading to spurious unstatisfied
+        // old (but incomplete) elements, leading to spurious unsatisfied
         // occurrence exceptions.
         Cleaner.cleanup();
         story = Story.createWithMultipleActors(actors);
