@@ -73,7 +73,8 @@ public class TestRunner {
         test("WithCheckerClauseSpecificationTest"), //
         test("WithCheckerClauseTest"), //
         test("WithExpectationSpecificationTest"), //
-        test("AdvancedMTTest")};
+        test("AdvancedMTTest"), //
+        test("TraceTest")};
 
     /**
      * Starts the execution of the JUnit tests.
