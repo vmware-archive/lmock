@@ -37,7 +37,7 @@ LIB_OUTPUT_DIR=lib
 lmockJar=$(LIB_OUTPUT_DIR)/lmock-$(VERSION).jar
 lmockJavadocJar=$(LIB_OUTPUT_DIR)/lmock-javadoc-$(VERSION).jar
 lmockTestsJar=$(LIB_OUTPUT_DIR)/lmockTests-$(VERSION).jar
-lmockSrcJar=../$(LIB_OUTPUT_DIR)/lmock-src-$(VERSION).jar
+lmockSrcJar=../../../../$(LIB_OUTPUT_DIR)/lmock-src-$(VERSION).jar
 
 ## Where we put the built classes.
 CLASS_OUTPUT_DIR=build
@@ -51,8 +51,8 @@ jUnit=tools/junit-4.9b2.jar
 # ------------------------------------------------------------------------------
 # SOURCES TO PROCEED
 # ------------------------------------------------------------------------------
-SOURCES=$(shell find src -name "*.java")
-TEST_SOURCES=$(shell find tests -name "*.java")
+SOURCES=$(shell find lmock/src/main -name "*.java")
+TEST_SOURCES=$(shell find lmock/src/test -name "*.java")
 
 # ------------------------------------------------------------------------------
 # BUILD
@@ -98,7 +98,7 @@ _javadoc: $(lmockJar)
 	$(JAR) $(lmockJavadocJar) lmock-javadoc 
 
 _src_package:
-	cd src && $(JAR) $(lmockSrcJar) com
+	cd lmock/src/main/java && $(JAR) $(lmockSrcJar) com
 
 _doxydoc: $(lmockJar)
 	$(DOXYGEN)
